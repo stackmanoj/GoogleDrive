@@ -73,5 +73,47 @@ namespace DriveQuickstart
             Console.Read();
 
         }
+        
+        private void GetFilesByRefreshToken()
+        {
+            ClientSecrets secrets = new ClientSecrets()
+            {
+                ClientId = "...",
+                ClientSecret = "..."
+            };
+
+            var token = new TokenResponse {RefreshToken = "...."};
+            var credentials = new UserCredential(new GoogleAuthorizationCodeFlow(
+                new GoogleAuthorizationCodeFlow.Initializer
+                {
+                    ClientSecrets = secrets
+                }),
+                "...",
+                token);
+            // Create Drive API service.
+            var service = new DriveService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credentials,
+                ApplicationName = ApplicationName,
+            });
+
+            // Define parameters of request.
+            FilesResource.ListRequest listRequest = service.Files.List();
+            listRequest.PageSize = 10;
+            listRequest.Fields = "nextPageToken, files(id, name)";
+
+            // List files.
+            IList<Google.Apis.Drive.v3.Data.File> files = listRequest.Execute()
+                .Files;
+            if (files != null && files.Count > 0)
+            {
+                foreach (var file in files)
+                {
+                }
+            }
+            else
+            {
+            }
+        }
     }
 }
